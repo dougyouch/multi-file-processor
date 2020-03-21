@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe MultiFileProcessor do
-  let(:file_pattern) { TMP_DIR.join('*.csv').to_s }
+  let(:file_pattern) { TMP_DIR.join('*.csv') }
   let(:options) { {} }
   let(:process_file_proc) { Proc.new { |_| } }
   let(:multi_file_processor) { MultiFileProcessor.new(file_pattern, options) }
@@ -48,6 +48,21 @@ describe MultiFileProcessor do
 
     describe 'options[:sort]' do
       let(:options) { {sort: true} }
+
+      before(:each) do
+        FileUtils.touch TMP_DIR.join('1.csv')
+        FileUtils.touch TMP_DIR.join('2.csv')
+      end
+
+      it 'moves all files to done' do
+        subject
+        expect(File.exist?(TMP_DIR.join('1.csv.done'))).to eq(true)
+        expect(File.exist?(TMP_DIR.join('2.csv.done'))).to eq(true)
+      end
+    end
+
+    describe 'options[:sort_by_mtime]' do
+      let(:options) { {sort_by_mtime: true} }
 
       before(:each) do
         FileUtils.touch TMP_DIR.join('1.csv')

@@ -81,6 +81,7 @@ class MultiFileProcessor
     return files.sample if options[:sample]
 
     files.sort! if options[:sort]
+    files = files.sort_by { |file| File.mtime(file) } if options[:sort_by_mtime]
     files.first
   end
 
