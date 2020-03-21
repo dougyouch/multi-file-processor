@@ -52,7 +52,7 @@ class MultiFileProcessor
 
   def reset_files!
     ext_reg = Regexp.new("\\.(#{inprogress_ext}|#{done_ext}|#{failed_ext})$")
-    Dir.glob(file_pattern + ".{#{inprogress_ext},#{done_ext},#{failed_ext}}").each do |file|
+    Dir.glob("#{file_pattern}.{#{inprogress_ext},#{done_ext},#{failed_ext}}").each do |file|
       original_file = file.sub(ext_reg, '')
       FileUtils.mv(file, original_file)
     end
@@ -60,6 +60,18 @@ class MultiFileProcessor
 
   def failed!
     raise FailedException, 'file processing failed'
+  end
+
+  def inprogress_ext
+    options[:inprogress_ext] || DEFAULT_INPROGRESS_EXT
+  end
+
+  def done_ext
+    options[:done_ext] || DEFAULT_DONE_EXT
+  end
+
+  def failed_ext
+    options[:failed_ext] || DEFAULT_FAILED_EXT
   end
 
   private
@@ -75,17 +87,5 @@ class MultiFileProcessor
   def move_inprogress_file_to_ext(inprogress_file, ext)
     new_file = inprogress_file.sub(/#{inprogress_ext}$/, ext)
     FileUtils.mv(inprogress_file, new_file)
-  end
-
-  def inprogress_ext
-    options[:inprogress_ext] || DEFAULT_INPROGRESS_EXT
-  end
-
-  def done_ext
-    options[:done_ext] || DEFAULT_DONE_EXT
-  end
-
-  def failed_ext
-    options[:failed_ext] || DEFAULT_FAILED_EXT
   end
 end
