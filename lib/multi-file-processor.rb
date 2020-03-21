@@ -74,15 +74,21 @@ class MultiFileProcessor
     options[:failed_ext] || DEFAULT_FAILED_EXT
   end
 
-  private
+  protected
 
   def next_file
-    files = Dir.glob(file_pattern)
+    files = all_files
     return files.sample if options[:sample]
 
     files.sort! if options[:sort]
     files = files.sort_by { |file| File.mtime(file) } if options[:sort_by_mtime]
     files.first
+  end
+
+  private
+
+  def all_files
+    Dir.glob(file_pattern)
   end
 
   def move_inprogress_file_to_ext(inprogress_file, ext)
